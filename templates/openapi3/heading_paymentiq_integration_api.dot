@@ -1,0 +1,62 @@
+# {{=data.header.title}}
+
+> Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example requests and responses.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
+
+{{? data.openapi.info.description}}{{=data.openapi.info.description}}{{?}}
+
+Base URLs:
+{{~data.servers :s}}
+* <a href="{{=s.url}}">{{=s.url}}</a>
+{{ for(var v in s.variables) { }}
+    * **{{=v}}** - {{=s.variables[v].description||''}} Default: {{=s.variables[v].default}}
+{{? s.variables[v].enum}}
+{{~ s.variables[v].enum :e}}
+        * {{= e}}
+{{~}}
+{{?}}
+{{ } }}
+{{~}}
+
+{{? data.openapi.info.termsOfService}}<a href="{{=data.openapi.info.termsOfService}}">Terms of service</a>{{?}}
+{{? data.openapi.info.contact}}{{? data.openapi.info.contact.email}}Email: <a href="mailto:{{=data.openapi.info.contact.email}}">{{=data.contactName}}</a> {{?}}{{? data.openapi.info.contact.url}}Web: <a href="{{=data.openapi.info.contact.url}}">{{=data.contactName}}</a> {{?}}{{?}}
+{{? data.openapi.info.license}}{{? data.openapi.info.license.url}}License: <a href="{{=data.openapi.info.license.url}}">{{=data.openapi.info.license.name}}</a>{{??}} License: {{=data.openapi.info.license.name}}{{?}}{{?}}
+
+<h1 id="introduction">Introduction</h1>
+<p>The intended audience for this document is the person responsible for the technical integration. Basic
+knowledge of networking programming and monetary transactions are required. Any operating system
+and any programming language can be used to implement the Integration API which is needed by
+PaymentIQ.</p>
+<p>The PaymentIQ Integration API uses JSON, <a href="http://en.wikipedia.org/wiki/JSON">http://en.wikipedia.org/wiki/JSON</a>, for all data
+interchange. It is language independent and supported for virtually all programming languages. All
+methods are invoked by sending a valid JSON request via HTTPS POST.</p>
+<p>Note: The PaymentIQ Integration API expects all requests and responses to be UTF-8 encoded</p>
+<p>Valid currency codes are upper case 3-letter characters according to ISO 4217, <a href="ttp://en.wikipedia.org/wiki/ISO_4217">http://en.wikipedia.org/wiki/ISO_4217</a>. Number of digits after the decimal are also defined by the ISO
+standard, e.g JPY (Japanese yen) has 0 digits after the decimal. </p>
+
+<h1 id="integration-overview">Integration Overview</h1>
+<p>One of the main architectural goals with PaymentIQ is to have it loosely coupled from the operator's
+platform so the two systems can evolve independently without affecting each other. For example,
+payment methods can be added, modified or updated without affecting the operator's platform. The
+operator can update and modify it's system without affecting PaymentIQ and vice versa</p>
+<img id="integration-image" src="images/integration-image.png" alt="integration-image">
+<p>In order to achieve the separation of concerns, the integration between the operator's platform and
+PaymentIQ is reverted, i.e. PaymentIQ calls the Operator Platform instead of the Operator Platform
+calls PaymentIQ. </p>
+<p>Therefore, the operator needs to implement the Integration API as specified in this document. </p>
+<p>For more information regarding the Front API, please see the 'Front-end API' documentation. </p>
+
+<h1 id="operator-platform">Operator Platform</h1>
+<p>The sequence diagram below describes how PaymentIQ calls the Operator Platform. The example is
+showing a credit card deposit without 3DS, but the flow between PaymentIQ and the Operator Platform
+is the same regardless of payment method or payment type. </p>
+<img id="operator-image" src="images/operator-image.png" alt="operator-image">
+
+<h1 id="operator-configuration">Operator Configuration</h1>
+<h2 id="ip-address">IP-Address whitelist</h2>
+<p>These are the IP-addresses that PaymentIQ uses for the communication with the merchant, and are the
+ones that needs to be whitelisted by merchant.</p>
+
+<h2 id="sessionid">Session-id</h2>
+<p>The session-id that is present in the /verifyuser request is created by the merchant, and is given in the
+initial request in the 'Front API'. PaymentIQ simply forwards it in order for the merchant to verify that
+it is valid.</p>
