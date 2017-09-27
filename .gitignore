@@ -6,6 +6,8 @@ in/
 out/
 scripts/
 test/
+.DS_Store
+
 
 # Logs
 logs
